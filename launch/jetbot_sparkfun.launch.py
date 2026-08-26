@@ -10,15 +10,15 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     
-    teleop_keyboard = Node(package='jetbot_ros', node_executable='teleop_keyboard',
+    teleop_keyboard = Node(package='jetbot_ros', executable='teleop_keyboard',
                            prefix='lxterminal -e', #'xterm -e'
                            output='screen',
                            emulate_tty=True)
     
-    motor_controller = Node(package='jetbot_ros', node_executable='motors_sparkfun',
+    motor_controller = Node(package='jetbot_ros', executable='motors_sparkfun',
                             output='screen', emulate_tty=True)  
     
-    video_source = Node(package='ros_deep_learning', node_executable='video_source',
+    video_source = Node(package='ros_deep_learning', executable='video_source',
                         parameters=[
                             {"resource": "csi://0"},
                             {"width": 320},
@@ -33,7 +33,7 @@ def generate_launch_description():
     
     rtp_output = DeclareLaunchArgument('rtp_output', default_value="DUSTINF-LT1.fios-router.home:1234")
     
-    video_output = Node(package='ros_deep_learning', node_executable='video_output',
+    video_output = Node(package='ros_deep_learning', executable='video_output',
                         parameters=[
                             {"resource": ["rtp://", LaunchConfiguration('rtp_output')]},
                             {"codec": "h264"},

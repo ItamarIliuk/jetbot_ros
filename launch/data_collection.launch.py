@@ -17,7 +17,7 @@ def generate_launch_description():
     data_root = DeclareLaunchArgument('data_root', default_value="/workspace/src/jetbot_ros/data/datasets")
     data_path = DeclareLaunchArgument('data_path', default_value=f"{datetime.now().strftime('%Y%m%d-%H%M%S')}")
 
-    data_collection = Node(package='jetbot_ros', node_executable='data_collection',
+    data_collection = Node(package='jetbot_ros', executable='data_collection',
                            parameters=[
                                {"data_path": [LaunchConfiguration('data_root'), os.path.sep, LaunchConfiguration('data_path')]},
                            ],

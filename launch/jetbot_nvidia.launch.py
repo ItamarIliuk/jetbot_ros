@@ -13,13 +13,13 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     
-    motor_controller = Node(package='jetbot_ros', node_executable='motors_nvidia',
+    motor_controller = Node(package='jetbot_ros', executable='motors_nvidia',
                             output='screen', emulate_tty=True)              
      
-    oled_controller = Node(package='jetbot_ros', node_executable='oled_ssd1306',
+    oled_controller = Node(package='jetbot_ros', executable='oled_ssd1306',
                             output='screen', emulate_tty=True)  
     
-    video_source = Node(package='ros_deep_learning', node_executable='video_source',
+    video_source = Node(package='ros_deep_learning', executable='video_source',
                         parameters=[
                             {"resource": "csi://0"},
                             {"width": 320},
@@ -34,7 +34,7 @@ def generate_launch_description():
     
     rtp_output = DeclareLaunchArgument('rtp_output', default_value="DUSTINF-LT1.fios-router.home:1234")
     
-    video_output = Node(package='ros_deep_learning', node_executable='video_output',
+    video_output = Node(package='ros_deep_learning', executable='video_output',
                         parameters=[
                             {"resource": ["rtp://", LaunchConfiguration('rtp_output')]},
                             {"codec": "h264"},

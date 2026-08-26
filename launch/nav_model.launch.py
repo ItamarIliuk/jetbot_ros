@@ -14,7 +14,7 @@ def generate_launch_description():
     speed_gain = DeclareLaunchArgument('speed_gain', default_value="0.15")
     steering_gain = DeclareLaunchArgument('steering_gain', default_value="0.4")
     
-    nav_model = Node(package='jetbot_ros', node_executable='nav_model',
+    nav_model = Node(package='jetbot_ros', executable='nav_model',
                      parameters=[
                         {"model": LaunchConfiguration('model')},
                         {"speed_gain": LaunchConfiguration('speed_gain')},

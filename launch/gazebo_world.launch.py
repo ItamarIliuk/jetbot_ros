@@ -23,6 +23,11 @@ def generate_launch_description():
     pkg_dir = get_package_share_directory('jetbot_ros')
  
     os.environ["GAZEBO_MODEL_PATH"] = os.path.join(pkg_dir, 'models')
+
+    # gazebo/plugins/user_camera_control_system is a standalone CMake project (not built by colcon);
+    # build it once via `cmake` + `make` in gazebo/plugins/build, then point Gazebo at the output .so.
+    plugin_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'gazebo', 'plugins', 'build')
+    os.environ["GAZEBO_PLUGIN_PATH"] = plugin_dir + os.pathsep + os.environ.get("GAZEBO_PLUGIN_PATH", "")
  
     world = os.path.join(pkg_dir, 'worlds', world_file_name)
     launch_file_dir = os.path.join(pkg_dir, 'launch')
@@ -35,7 +40,7 @@ def generate_launch_description():
                 output='screen', emulate_tty=True)
 
     
-    spawn_entity = Node(package='jetbot_ros', node_executable='gazebo_spawn',   # FYI 'node_executable' is renamed to 'executable' in Foxy
+    spawn_entity = Node(package='jetbot_ros', executable='gazebo_spawn',
                         parameters=[
                             {'name': LaunchConfiguration('robot_name')},
                             {'model': LaunchConfiguration('robot_model')},
@@ -44,7 +49,17 @@ def generate_launch_description():
                             {'z': LaunchConfiguration('z')},
                         ],
                         output='screen', emulate_tty=True)
- 
+
+    # The SDF's chassis->camera_link joint is fixed but nothing publishes its TF (Gazebo only
+    # publishes what a plugin explicitly sends, and diff_drive only covers odom/wheel frames).
+    # Without this, RViz2's Camera display can't resolve camera_link and fails to connect.
+    # Pose matches gazebo/models/simple_diff_ros/model.sdf's camera_link <pose> (x y z roll pitch yaw).
+    camera_tf = Node(package='tf2_ros', executable='static_transform_publisher',
+                     arguments=['--x', '0.175', '--y', '0', '--z', '0.2',
+                                '--roll', '0', '--pitch', '0.1', '--yaw', '0',
+                                '--frame-id', 'chassis', '--child-frame-id', 'camera_link'],
+                     output='screen')
+
     return LaunchDescription([
         robot_name,
         robot_model,
@@ -53,4 +68,5 @@ def generate_launch_description():
         robot_z,
         gazebo,
         spawn_entity,
+        camera_tf,
     ])

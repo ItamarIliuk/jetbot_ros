@@ -6,12 +6,14 @@ import os
 
 package_name = 'jetbot_ros'
 
-def generate_data_files(dirs=['launch', 'gazebo/worlds', 'gazebo/models']):
+def generate_data_files(dirs=['launch', 'urdf', 'rviz', 'gazebo/worlds', 'gazebo/models']):
     """
     Generate recursive list of data files, without listing directories in the output.
     """
     data_files = []
     for path, _, files in chain.from_iterable(os.walk(dir) for dir in dirs):
+        if '__pycache__' in path:  # ros2 launch compiles launch files in place under --symlink-install
+            continue
         install_dir = path[len('gazebo/'):] if path.startswith('gazebo/') else path  # remove gazebo/ prefix
         install_dir = os.path.join('share', package_name, install_dir)
         list_entry = (install_dir, [os.path.join(path, f) for f in files if not f.startswith('.')])

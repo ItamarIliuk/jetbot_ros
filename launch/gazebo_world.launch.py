@@ -31,8 +31,11 @@ def spawn_robot(context, *args, **kwargs):
         return [
             Node(package='robot_state_publisher', executable='robot_state_publisher',
                  namespace=name,
+                 # publish_frequency defaults to 20 Hz, which silently drops joint_states published
+                 # faster than that and makes the wheels stutter in RViz2; keep it above the plugin rate.
                  parameters=[{'robot_description': robot_description,
-                              'use_sim_time': use_sim_time}],
+                              'use_sim_time': use_sim_time,
+                              'publish_frequency': 100.0}],
                  output='screen'),
 
             # -package_to_model rewrites the URDF's package:// mesh URIs into model:// ones,

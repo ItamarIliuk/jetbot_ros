@@ -134,6 +134,18 @@ If the lab image already ships with ROS2 Humble and the Gazebo packages installe
 
 ### Common usage (WSL2 and VM)
 
+#### Robot model and launch arguments
+
+`gazebo_world.launch.py` spawns the JetBot described in `urdf/jetbot.urdf.xacro` (the real JetBot v3 meshes from `gazebo/models/jetbot/meshes`, differential drive, front camera) through `robot_state_publisher`, so its TF tree and its 3D model are available to RViz2. Useful arguments:
+
+```bash
+ros2 launch jetbot_ros gazebo_world.launch.py world:=dirt_path.world           # another world from gazebo/worlds
+ros2 launch jetbot_ros gazebo_world.launch.py x:=0.0 y:=0.0                    # spawn position
+ros2 launch jetbot_ros gazebo_world.launch.py robot_model:=simple_diff_ros     # the old box-with-wheels SDF model
+```
+
+<img src="docs/images/jetbot_urdf_front.png" width="380"> <img src="docs/images/jetbot_urdf_side.png" width="380">
+
 #### Test Teleop
 
 The simplest approach that always works is running the node directly (without going through `ros2 launch`):
@@ -155,20 +167,21 @@ space key, s:  force stop
 
 Press Ctrl+C to quit.
 
-#### View the camera in RViz2
+#### View the robot and its camera in RViz2
 
-With `gazebo_world.launch.py` running, open RViz2 in another terminal (remember to source both setup files first):
+With `gazebo_world.launch.py` running, open RViz2 in another terminal with the bundled config (remember to source both setup files first):
 
 ```bash
-rviz2
+rviz2 -d $(ros2 pkg prefix jetbot_ros)/share/jetbot_ros/rviz/jetbot.rviz
 ```
 
-- **Fixed Frame**: `odom` (or `chassis`)
-- **Add → By display type → Image** (simplest, just shows the raw 2D feed) **or Camera** (3D overlay)
-- **Topic**: `/jetbot/camera/image_raw`
-- **Image Transport**: `raw`
+It comes preconfigured with the **RobotModel** (the JetBot meshes, from `/jetbot/robot_description`), **TF**, **Odometry** and the camera **Image** panel. To set it up by hand in a blank `rviz2` instead:
 
-The **TF** display also works out of the box and shows the `odom → chassis → left_wheel/right_wheel/camera_link` frames moving along with the robot.
+- **Fixed Frame**: `odom`
+- **Add → RobotModel**, Description Topic `/jetbot/robot_description` (Durability Policy: *Transient Local*)
+- **Add → Image** (raw 2D feed) **or Camera** (3D overlay), Topic `/jetbot/camera/image_raw`, Image Transport `raw`
+
+The TF tree is `odom → base_footprint → chassis → left_wheel / right_wheel / camera_link → camera_optical_frame`. Images are stamped in `camera_optical_frame` (ROS optical convention), so the Camera display lines up with the 3D view.
 
 #### Data Collection
 
@@ -337,6 +350,18 @@ Se a imagem do laboratório já vem com ROS2 Humble e os pacotes do Gazebo insta
 
 ### Uso comum (WSL2 e VM)
 
+#### Modelo do robô e argumentos do launch
+
+O `gazebo_world.launch.py` faz o spawn do JetBot descrito em `urdf/jetbot.urdf.xacro` (os meshes reais do JetBot v3 de `gazebo/models/jetbot/meshes`, tração diferencial, câmera frontal) via `robot_state_publisher`, então a árvore TF e o modelo 3D ficam disponíveis pro RViz2. Argumentos úteis:
+
+```bash
+ros2 launch jetbot_ros gazebo_world.launch.py world:=dirt_path.world           # outro mundo de gazebo/worlds
+ros2 launch jetbot_ros gazebo_world.launch.py x:=0.0 y:=0.0                    # posição de spawn
+ros2 launch jetbot_ros gazebo_world.launch.py robot_model:=simple_diff_ros     # o modelo SDF antigo (caixa com rodas)
+```
+
+<img src="docs/images/jetbot_urdf_front.png" width="380"> <img src="docs/images/jetbot_urdf_side.png" width="380">
+
 #### Testar o Teleop
 
 O jeito mais simples e que sempre funciona é rodar o nó direto (sem passar pelo `ros2 launch`):
@@ -358,20 +383,21 @@ espaço, s:  parada forçada
 
 Pressione Ctrl+C para sair.
 
-#### Ver a câmera no RViz2
+#### Ver o robô e a câmera no RViz2
 
-Com o `gazebo_world.launch.py` rodando, abra o RViz2 em outro terminal (lembrando de rodar os dois `source` primeiro):
+Com o `gazebo_world.launch.py` rodando, abra o RViz2 em outro terminal com a config que vem no pacote (lembrando de rodar os dois `source` primeiro):
 
 ```bash
-rviz2
+rviz2 -d $(ros2 pkg prefix jetbot_ros)/share/jetbot_ros/rviz/jetbot.rviz
 ```
 
-- **Fixed Frame**: `odom` (ou `chassis`)
-- **Add → By display type → Image** (mais simples, só mostra o feed 2D) **ou Camera** (overlay 3D)
-- **Topic**: `/jetbot/camera/image_raw`
-- **Image Transport**: `raw`
+Ela já vem com o **RobotModel** (os meshes do JetBot, via `/jetbot/robot_description`), **TF**, **Odometry** e o painel **Image** da câmera. Se preferir montar na mão num `rviz2` vazio:
 
-O display **TF** também funciona normalmente e mostra os frames `odom → chassis → left_wheel/right_wheel/camera_link` se movimentando junto com o robô.
+- **Fixed Frame**: `odom`
+- **Add → RobotModel**, Description Topic `/jetbot/robot_description` (Durability Policy: *Transient Local*)
+- **Add → Image** (feed 2D cru) **ou Camera** (overlay 3D), Topic `/jetbot/camera/image_raw`, Image Transport `raw`
+
+A árvore TF é `odom → base_footprint → chassis → left_wheel / right_wheel / camera_link → camera_optical_frame`. As imagens são carimbadas em `camera_optical_frame` (convenção óptica do ROS), então o display Camera fica alinhado com a cena 3D.
 
 #### Coleta de Dados
 

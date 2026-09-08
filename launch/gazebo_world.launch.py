@@ -2,6 +2,7 @@ import os
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction
+from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
@@ -38,13 +39,10 @@ def spawn_robot(context, *args, **kwargs):
                               'publish_frequency': 100.0}],
                  output='screen'),
 
-            # -package_to_model rewrites the URDF's package:// mesh URIs into model:// ones,
-            # which Gazebo resolves through GAZEBO_MODEL_PATH (the package share dir is added below).
             Node(package='gazebo_ros', executable='spawn_entity.py',
                  arguments=['-topic', ['/', name, '/robot_description'],
                             '-entity', name,
                             '-robot_namespace', name,
-                            '-package_to_model',
                             '-x', x, '-y', y, '-z', z],
                  output='screen'),
         ]
@@ -71,10 +69,9 @@ def spawn_robot(context, *args, **kwargs):
 def generate_launch_description():
     pkg_dir = get_package_share_directory('jetbot_ros')
 
-    # model:// lookups: gazebo/models/* for the worlds, plus the share dir itself so the
-    # URDF's (rewritten) model://jetbot_ros/models/jetbot/meshes/... URIs resolve.
+    # model:// lookups for the worlds' models (gazebo/models/*); the URDF uses file:// mesh URIs
     os.environ['GAZEBO_MODEL_PATH'] = os.pathsep.join(
-        [os.path.join(pkg_dir, 'models'), os.path.dirname(pkg_dir)]
+        [os.path.join(pkg_dir, 'models')]
         + [p for p in os.environ.get('GAZEBO_MODEL_PATH', '').split(os.pathsep) if p])
 
     # gazebo/plugins/user_camera_control_system is a standalone CMake project (not built by colcon);
@@ -84,11 +81,18 @@ def generate_launch_description():
 
     world = [os.path.join(pkg_dir, 'worlds', ''), LaunchConfiguration('world')]
 
+    ros_plugins = ['-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so']
+
     gazebo = ExecuteProcess(
-        cmd=['gazebo', '--verbose', world,
-             '-s', 'libgazebo_ros_init.so',
-             '-s', 'libgazebo_ros_factory.so',
+        cmd=['gazebo', '--verbose', world, *ros_plugins,
              '-g', 'libgazebo_user_camera_control_system.so'],
+        condition=IfCondition(LaunchConfiguration('gui')),
+        output='screen', emulate_tty=True)
+
+    # gui:=false runs only the physics server (CI, SSH sessions, or debugging without a display)
+    gzserver = ExecuteProcess(
+        cmd=['gzserver', '--verbose', world, *ros_plugins],
+        condition=UnlessCondition(LaunchConfiguration('gui')),
         output='screen', emulate_tty=True)
 
     return LaunchDescription([
@@ -102,6 +106,9 @@ def generate_launch_description():
         DeclareLaunchArgument('y', default_value='-2.65'),
         DeclareLaunchArgument('z', default_value='0.0'),
         DeclareLaunchArgument('use_sim_time', default_value='true'),
+        DeclareLaunchArgument('gui', default_value='true',
+                              description='false: run gzserver only (no Gazebo window)'),
         gazebo,
+        gzserver,
         OpaqueFunction(function=spawn_robot),
     ])

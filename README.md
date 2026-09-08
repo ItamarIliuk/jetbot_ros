@@ -146,6 +146,13 @@ If the lab image already ships with ROS2 Humble and the Gazebo packages installe
 ros2 launch jetbot_ros gazebo_world.launch.py world:=dirt_path.world           # another world from gazebo/worlds
 ros2 launch jetbot_ros gazebo_world.launch.py x:=0.0 y:=0.0                    # spawn position
 ros2 launch jetbot_ros gazebo_world.launch.py robot_model:=simple_diff_ros     # the old box-with-wheels SDF model
+ros2 launch jetbot_ros gazebo_world.launch.py gui:=false                       # physics server only, no Gazebo window
+```
+
+If the Gazebo window shows up in the taskbar but never gets focus, or the launch complains that port 11345 is busy, a previous run is still alive — clear it and relaunch:
+
+```bash
+pkill -9 gzserver; pkill -9 gzclient
 ```
 
 <img src="docs/images/jetbot_urdf_front.png" width="380"> <img src="docs/images/jetbot_urdf_side.png" width="380">
@@ -366,6 +373,13 @@ O `gazebo_world.launch.py` faz o spawn do JetBot descrito em `urdf/jetbot.urdf.x
 ros2 launch jetbot_ros gazebo_world.launch.py world:=dirt_path.world           # outro mundo de gazebo/worlds
 ros2 launch jetbot_ros gazebo_world.launch.py x:=0.0 y:=0.0                    # posição de spawn
 ros2 launch jetbot_ros gazebo_world.launch.py robot_model:=simple_diff_ros     # o modelo SDF antigo (caixa com rodas)
+ros2 launch jetbot_ros gazebo_world.launch.py gui:=false                       # só o servidor de física, sem janela do Gazebo
+```
+
+Se a janela do Gazebo aparecer na barra de tarefas mas nunca ganhar foco, ou o launch reclamar que a porta 11345 está ocupada, uma execução anterior ainda está viva — limpe e relance:
+
+```bash
+pkill -9 gzserver; pkill -9 gzclient
 ```
 
 <img src="docs/images/jetbot_urdf_front.png" width="380"> <img src="docs/images/jetbot_urdf_side.png" width="380">

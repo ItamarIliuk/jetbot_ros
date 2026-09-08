@@ -14,7 +14,9 @@
 -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="jetbot">
 
-  <xacro:property name="mesh_dir"   value="package://jetbot_ros/models/jetbot/meshes"/>
+  <!-- file:// works for both RViz2 and Gazebo classic; package:// would need the ROS share dir on
+       GAZEBO_MODEL_PATH, which makes gzclient's Insert panel complain about every non-model folder there -->
+  <xacro:property name="mesh_dir"   value="file://$(find jetbot_ros)/models/jetbot/meshes"/>
   <xacro:property name="mesh_scale" value="0.001 0.001 0.001"/>
   <xacro:property name="mesh_rpy"   value="${pi/2} 0 ${pi/2}"/>
 

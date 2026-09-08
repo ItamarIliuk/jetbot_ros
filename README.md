@@ -115,7 +115,11 @@ source ~/ros2_ws/install/setup.bash
 ros2 launch jetbot_ros gazebo_world.launch.py
 ```
 
-Leave that terminal running Gazebo, and for the next commands (teleop, RViz2, etc.) open **a new terminal** and re-run both `source` lines above before each command.
+Leave that terminal running Gazebo, and for the next commands (teleop, RViz2, etc.) open **a new terminal** and re-run both `source` lines above before each command. Note that the overlay to source is the colcon workspace (`~/ros2_ws/install/setup.bash`), not a folder inside the repo — `Package 'jetbot_ros' not found` means that line is missing. To make it permanent:
+
+```bash
+echo 'source ~/ros2_ws/install/setup.bash --extend' >> ~/.bashrc
+```
 
 ---
 
@@ -331,7 +335,11 @@ source ~/ros2_ws/install/setup.bash
 ros2 launch jetbot_ros gazebo_world.launch.py
 ```
 
-Deixe esse terminal aberto rodando o Gazebo, e para os próximos comandos (teleop, RViz2 etc) abra **um novo terminal** e rode de novo os dois `source` acima antes de cada comando.
+Deixe esse terminal aberto rodando o Gazebo, e para os próximos comandos (teleop, RViz2 etc) abra **um novo terminal** e rode de novo os dois `source` acima antes de cada comando. Atenção: o overlay a carregar é o do workspace colcon (`~/ros2_ws/install/setup.bash`), não uma pasta dentro do repositório — `Package 'jetbot_ros' not found` significa que essa linha faltou. Para deixar permanente:
+
+```bash
+echo 'source ~/ros2_ws/install/setup.bash --extend' >> ~/.bashrc
+```
 
 ---
 

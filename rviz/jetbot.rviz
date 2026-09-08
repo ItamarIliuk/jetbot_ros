@@ -1,0 +1,121 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /RobotModel1
+        - /Camera1
+    Tree Height: 500
+  - Class: rviz_common/Views
+    Name: Views
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Enabled: true
+      Name: Grid
+      Cell Size: 0.5
+      Plane Cell Count: 20
+      Reference Frame: <Fixed Frame>
+      Value: true
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Name: TF
+      Show Arrows: false
+      Show Axes: true
+      Show Names: true
+      Marker Scale: 0.25
+      Frame Timeout: 15
+      Value: true
+    - Class: rviz_default_plugins/RobotModel
+      Enabled: true
+      Name: RobotModel
+      Alpha: 1
+      Collision Enabled: false
+      Visual Enabled: true
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /jetbot/robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+    - Class: rviz_default_plugins/Odometry
+      Enabled: true
+      Name: Odometry
+      Keep: 100
+      Position Tolerance: 0.05
+      Angle Tolerance: 0.1
+      # gazebo_ros_diff_drive reports 1e12 covariance on the axes it doesn't estimate (z, roll,
+      # pitch); drawing it fills the view with giant yellow/magenta ellipsoids.
+      Covariance:
+        Value: false
+      Shape:
+        Alpha: 1
+        Axes Length: 0.1
+        Axes Radius: 0.01
+        Color: 255; 25; 0
+        Head Length: 0.03
+        Head Radius: 0.02
+        Shaft Length: 0.05
+        Shaft Radius: 0.01
+        Value: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /jetbot/odom
+      Value: true
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Name: Camera
+      Normalize Range: true
+      Max Value: 1
+      Min Value: 0
+      Median window: 5
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /jetbot/camera/image_raw
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: odom
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/Measure
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Name: Current View
+      Distance: 0.8
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0.05
+      Pitch: 0.45
+      Yaw: 2.4
+      Target Frame: chassis
+      Value: Orbit (rviz)
+    Saved: ~
+Window Geometry:
+  Camera:
+    collapsed: false
+  Displays:
+    collapsed: false
+  Height: 850
+  Width: 1400
+  Views:
+    collapsed: false

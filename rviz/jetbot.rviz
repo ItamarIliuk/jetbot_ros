@@ -49,6 +49,10 @@ Visualization Manager:
       Keep: 100
       Position Tolerance: 0.05
       Angle Tolerance: 0.1
+      # gazebo_ros_diff_drive reports 1e12 covariance on the axes it doesn't estimate (z, roll,
+      # pitch); drawing it fills the view with giant yellow/magenta ellipsoids.
+      Covariance:
+        Value: false
       Shape:
         Alpha: 1
         Axes Length: 0.1
